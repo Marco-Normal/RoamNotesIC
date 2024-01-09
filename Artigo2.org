@@ -1,0 +1,119 @@
+:PROPERTIES:
+:ID:       ab138f28-541b-4fc3-8928-8a36b9d52f3f
+:END:
+#+title: Artigo 2
+#+filetags: :artigo:
+
+* Siglas
+| Sigla | Significado                                       |
+| EC    | Eddy Covariance                                   |
+| NDVI  | Normalised difference vegetation index            |
+| EVI   | Enhanced vegetation index                         |
+| NIR   | Refletancia da superficie perto do infra-vermelho |
+| NIRv  | Refletância da vegetação no infra-vermelho        |
+| PFTs  | Plant functional types                            |
+| Reco  | Ecosystem respiration                             |
+| H     | Sensible Heat                                     |
+| LE    | Latent energy                                     |
+| NEE   | New ecosystem exchange                            |
+
+
+* Resumo e Introdução
+Como primeiro ponto, esse artigo tem a intenção de explorar a relação entre a resolução espacial de satélites e suas influências na medição de fluxos de carbono. Isso tudo como forma de conseguir comparar com o método utilizado /in situ/ que é o Eddy covariance (EC). Esse método é muito utilizado em torres pois permite medição da pegada desde poucos metros ao redor da torre em até mais de mil metros em raio.
+A junção de várias torres, de diversos países, gerou a criação da base de dados [[https://fluxnet.org/data/fluxnet2015-dataset/][FLUXNET2015]], que é uma base de dados colaborativas contando com mais de 206 torres. Porém, por mais que se tenha essa grande quantidade de torres e que o método consiga se extrapolado para relativamente distante da torre, o fato de elas estarem concentrada na região norte do globo, em junção de em sua maior extensão de medição possível, ser pequena em relação à extensão global, faz com que tenhamos uma medição não muito eficaz globalmente, surgindo necessidade que tenhamos outros métodos de medições mais globais.
+Uma forma que é utilizada é a extrapolação utilizando dados de satélites, porém, tem de ser considerado suas dificuldades, em que satélites com resolução espacial grande, uma área de muitos km, certas localidades podem ser menos de um pixel nessa fotografia, mas serem área de grande variabilidade. Porém, com surgimento de satélites como o [[https://www.embrapa.br/satelites-de-monitoramento/missoes/landsat][Landsat-7/-8]], com resolução de 30m, e o [[https://www.embrapa.br/satelites-de-monitoramento/missoes/sentinel][Sentinel-2]] com resolução de 20m, possuem grande potencial de serem utilizados para essa finalidade.
+O objetivo desse artigo é extrapolar o carbono do EC, água e fluxos de energia numa resolução espacial mais fina, de forma custo-efetiva, com pertubação de vida animal.
+O artigo é dividido em duas partes: A primeira é a estimativa do fluxo advindo de 206 torres, considerando 11 ecossistemas e 3 satélites com resolução variando de 30 a 5566m. A segunda é o impacto causado quando extrapolados os fluxos para obter estimativas em uma grid de 30m numa área de pasto.
+
+* Metodologia
+** Framework para a extrapolação do fluxo usando ML
+Tipicamente, para extrapolar fluxos de EC, usa-se ML, de forma que
+
+\begin{equation}
+\label{eq:flux}
+Flux = f(Sat., Meteo., aux.)
+\end{equation}
+Onde Sat. são produtos de satélites sobre dados da vegetação, como o [[https://digifarmz.com/2023/12/12/o-que-e-ndvi/][NDVI]], [[https://en.wikipedia.org/wiki/Enhanced_vegetation_index][EVI]], [[https://science.nasa.gov/ems/08_nearinfraredwaves/][NIRv]]. /Meteo./ são dados metereológicos, incluido radiação solar e temperatura e o /aux./ são paramêtros auxiliares que incluem data e os tipos funcionais de plantas (PFTs).
+Eles usaram 3 torres em campos de pastagem similares entre si. Como as torres variam uma a uma, eles interpolaram os dados para a localização das torres utilizando [[https://pt.wikipedia.org/wiki/Inverso_da_pot%C3%AAncia_das_dist%C3%A2ncias][inverso das potências das distâncias]] (IDW). O algoritmo de ML utilizado foi o [[https://en.wikipedia.org/wiki/XGBoost][eXtreme Gradient Boosting]] (Xgboost). Para o treinamento, eles usaram um método em que, por exemplo, com 20 torres em regiões de pasto, o algoritmo iria treinar em 19 deles e predizer a última, isso para cada uma delas. Esse método foi repetido 206 vezes para as torres do FLUXNET2015 e três vezes para as regiões de pasto.
+As estatísticas utilizada foram o coeficiente de determinação (\( R^2 \)) e o erro médio[fn:1] [[https://www.youtube.com/watch?v=ou7fjZRUVZI][(MBE)]]. A incerteza foi medida com o a [[https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjwt8GFtcSDAxX6P7kGHRrjCCoQFnoECBEQAQ&url=https%3A%2F%2Fpt.wikipedia.org%2Fwiki%2FAmplitude_interquartil&usg=AOvVaw3qiyQGOpKtjohi1gvi_VVS&opi=89978449][amplitude interquartil]] (IQR) do MBE. Ademais eles disponibilizaram o RMSE.
+** Dados
+Os dados variam de 2005-2014, da média diária dos fluxos de EC da base de dados do FLUXNET. Esses fluxos incluem net ecossystem exchange usando o [[https://fluxnet.org/data/fluxnet2015-dataset/data-processing/][Variable Ustar Threshold (VUT)]]. Produção primária bruta (GPP) usando a partição noturna, repiração do ecossistema usando a partição noturna[fn:2], calor sensivel usando amostragem de distribuição marginal ([[https://en.wikipedia.org/wiki/Marginal_distribution][MDS]]) energia latente usando MDS.
+*** Dados de satélite
+Usaram o produto da refletância da superfície atmosfericamente corrigida de 5 satélites, sendo eles
+- [[https://landsat.gsfc.nasa.gov/etm-plus/][Landsat-7/Enchanced Thematic Mapper Plus (ETM+)]]
+- [[https://landsat.gsfc.nasa.gov/satellites/landsat-8/spacecraft-instruments/operational-land-imager/][Lansat-8/Operational Land Imager (OLI)]]
+- [[https://sentinels.copernicus.eu/web/sentinel/technical-guides/sentinel-2-msi/msi-instrument][Sentinel-2A/-2B MultiSpectral Instrument (MSI)]]
+- [[https://modis.gsfc.nasa.gov/about/][Aqua/Moderate Resolution Imaging Spectroradiometer (MODIS)]]
+- [[https://www.eumetsat.int/avhrr][Advanced Very High Resolution Radiometer (AVHRR)]]
+
+O último esta abordo do [[https://www.nesdis.noaa.gov/current-satellite-missions/currently-flying][NOAA]], que está na órbita polar.
+Como mencionado, o estudo é dividio em duas partes, a primeira utiliza dados de alta resolução do Landsat-7 e dois de resolução moderada do MODIS e do AVHRR. A segunda parte utiliza dados de alta resolução do Landsat-8 e do Sentinel-2. Para o Landsat-7/-8, os [[https://www.usgs.gov/landsat-missions/landsat-collection-2][dados]] são da coleção 2 tier 1.
+*** Dados metereológicos
+Os dados são da quinta geração do centro de previsão do tempo de alcance médio da Europa (ECMWF) com reanalise atmosferica do clima global ([[https://www.ecmwf.int/en/era5-land][ERA5-Land]])[fn:3] .
+Ela possui dados de 1950-Presente, com resolução espacial de 0.1°x0.1°. Aqui foram usados a temperatura de 2m, temperatura de orvalho de 2m, radiação solar para baixo (SW_IN), radiação superficial termal para baixo, componente u e v do vento a 10m e a precipitação.
+
+#+CAPTION: Dados de satélite
+#+NAME: sat
+
+[[./Artigos/Pdf/Artigo 2/fig1.png]]
+
+* Resultados
+** Comparações com o FLUXNET2015
+Em geral os dados gráficos ficaram bastante similares, como podem ser [[scatter_plot][observados]]. A medição do EC medido e as estimativas do ML foram menor para o NEE, do que os outros fluxos, com \( R^2 \) médio apresentados na tabela abaixo. Em geral, a diferença entre os fluxos para o mesmo satélite foram baixas, com \( R^2 < 0.02 \), com o NIRv geralmente sendo o melhor. Entre os satélites, a maior diferença foram entre GPP e NEE, onde o MODIS teve o maior \( R^2 \) sendo 0.04 maior e 0.03 maior, respectivamente, quando comparados ao Landsat-7 e AVHRR. Em relação ao MBE, a diferença entre os satélites foram pequenas. Para o mesmo satélite a diferença ficou menor que \( 0.05 \; Mg \cdot ha^{-1} yr^{-1}  \) para NEE, GPP e Reco e menores que \( 5 \; MJ\; m^{-2} yr^{-1} \) para H e LE. Para o GPP, Landsat-7 obteve o menor MBE, sendo \( 0.07 \; Mg \cdot ha^{-1} yr^{-1}\)
+
+#+CAPTION: Gráfico de Dispersão
+#+NAME: scatter_plot
+[[./Artigos/Pdf/Artigo 2/fig2.png]]
+
+#+CAPTION: Tabelas dos Valores de \( R^2 \)
+#+NAME: tab_r2
+| Fluxo | \( R^2 \) |
+|-------+-----------|
+| NEE   |      0.42 |
+| GPP   |      0.65 |
+| Reco  |       0.5 |
+| H     |      0.61 |
+| LE    |      0.57 |
+
+Os gráficos de extrapolação variaram bastantes a depender do escorristema. Para ecossistemas com poucas torres, a correlação entre o medido e o predizido foi baixa. Em geral, quanto maior o número de torres em um ecossistema, maior o \( R^2 \)
+
+#+CAPTION: Gráficos de Extrapolção
+#+NAME: extrap
+[[./Artigos/Pdf/Artigo 2/fig3.png]]
+
+O \( R^2 \) através de todas as torres e fluxos foi 0.81, com um erro de estimação pequeno \( \ll 1.5 \; Mg \; ha^{-1} yr^{-1} \). De acordo com o tipos de fluxos do ecossistemas, o da respiração foi o maior, com a diferença entre os \( R^2 \) pequeno entre as torres, exceto para a energia latente. Ademais a correlação de ajuste entre o estimado e medido foi perto de 1. O primeiro quartil, média, e o terceiro quartial das curvas foram 0.77, 0.85 e 0.89, respectivamente.
+
+#+CAPTION: Ajuste para os fluxos do ecossistema
+#+NAME: eco_flux
+[[./Artigos/Pdf/Artigo 2/fig4.png]]
+
+Em geral, a serie temporal e as estimativas foram consistentes com medições de EC. O erro absoluto cumulativo teve seu menor valor em \( 2.79\% \) e seu maior \( 17.69\% \) para GPP e LEE. Nenhuma correlação entre os erros, entre as torres, foram observadas.
+
+#+CAPTION: Série temporal
+#+NAME: time_series
+[[./Artigos/Pdf/Artigo 2/fig5.png]]
+
+| Fluxo | Erro Absoluto Cumulativo |
+|-------+--------------------------|
+| GPP   |                    2.79% |
+| Reco  |                    5.38% |
+| H     |                    7.11% |
+| NEE   |                   11.97% |
+| LE    |                   17.69% |
+
+* Discussão
+De acordo com os resultados, a extrapolação em escala fina dos fluxos pode ser considerada viável. Os fluxos de EC estão bastante pertos das estimativas dos satélites. A diferença foi bem pequena o que leva à segunda parte do artigo, que é a aplicação num campo de pastagem. Não acho que seja necessário.
+O fluxo total extrapolado entre cada satélite teve uma consistência bastante alta, porém, a seleção do satélite influencia muito quando quer capturar a variabilidade espacial do fluxo, até mesmo com satélites de resolução igual. Uma das sugestões de melhoria é a mudança da base de dados metereológicos, pois tem uma resolução baixa, 0.1°x0.1°, ou seja, 10 km x 10 km.
+Para cada ecossitema, houve uma variação, onde a estimativa foi melhor em áreas com grama e florestas do que em matagais. Isso pode ser devido à falta de torres de EC que lá tem, já que isso é um fator importante. Pode ser também pelo próprio ecossitema que naturalmente produzem menos carbono, gerando sinais mais fracos. Ademais, até mesmo as estações podem gerar diferenças.
+A extrapolação para uma grid de 30 metros foi boa, com um \( R^2=0.55 \) numa escala global com um \( R^2=0.88 \) no pasto que decidiram estudar.
+
+* Conclusão
+Satélites com resoluções espaciais diferentes possuem estimativas de fluxo que concordam entre si. Extrapolação fluxos de EC, diariamente, com resolução de 30m é promissora. Sentinel-2 é mais recomendado por produzir imagens com textura melhor que o Landsat-7/-8.
+
+* Footnotes
+
+
+[fn:3] Isso é so um nome
+[fn:2] Por que a partir da partição noturna?
+
+[fn:1] Me parece estranho essa métrica, para falar o mínimo. Pouco usada, por que não so usar o RMSE?

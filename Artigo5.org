@@ -1,0 +1,32 @@
+:PROPERTIES:
+:ID:       f89f3751-36eb-4259-9cd0-668dff6f8344
+:END:
+#+title: Artigo 5
+#+date: [2024-01-09 Tue 09:05]
+* OBS:
+Esse artigo cai fora do que queremos, por que ele é de medição de XCH4, que não é o que buscamos.
+
+* Resumo
+Satélite: GOSAT
+Dados não advindos de satélites: TROPOMI, TCOON
+Realização de uma mistura de todos.
+ML: Random Forest, LightGMB e XGBoost.
+O modelo teve um \( R^2 = 0.53 \) e RMSE = 1.24 ppb para predição dos dados \( \Delta(TROPOMI-GOSAT) \). O modelo em geral subestima as regiões com altos valores e superestima regiões com altos valores. Em geral, a mistura dos dados melhora a confiabilidade da inversão dos dados de TROPOMI para inferir emissões de metano.
+
+* Tabela de Siglas
+| Sigla   | Significado                        |
+|---------+------------------------------------|
+| SWIR    | Shortwave infrared                 |
+| TROPOMI | Tropospheric Monitoring Instrument |
+|         |                                    |
+
+* Resumo/Introdução
+
+
+* Materiais e Métodos
+
+
+* Resultados
+
+
+* Conclusão

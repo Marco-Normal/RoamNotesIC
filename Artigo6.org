@@ -1,0 +1,78 @@
+:PROPERTIES:
+:ID:       841ce4e1-4c9f-4fc1-b005-1f18c6047afd
+:END:
+#+title: Artigo 6
+#+date: [2024-01-09 Tue 09:28]
+
+
+* Resumo
+
+
+* Tabela de Siglas
+| Sigla             | Significado                 |
+|-------------------+-----------------------------|
+| LST               | Land surface Temperature    |
+| Rs                | Soil Respiration            |
+| NDVI              | Normalized vegetation indez |
+| C \( I_{green} \) | Green chlorophyll           |
+| EVI               | Enhanced vegetation index   |
+| LAI               | leaf area index             |
+
+* Resumo/Introdução
+A maioria do carbono na Terra é sequestrado nos solos e pode ser liberado como CO_{2} na atmosfera através de respiração, seja de plantas, microorganismos e da fauna. Esse fenômeno é altamente influenciado pela temperatura do solo e umidade, então. com um aumento da temperatura global, acontece um feedback positivo, onde aumentando o CO2 da atmosfera aumenta-se a temperatura, que aumenta o Rs e assim continuamente.
+As medições de Rs em geral são feitas /in situ/, em geral com camâras de solo, que tem pouca extensão territorial, tornando difícil fazer medições de extensas áreas. Em escala global, se torna ainda mais difícil, tendo em vista que de ambiente em ambiente há uma grande variação.
+Em florestas coníferas, por exemplo, a taxa de respiração é menor que em [[https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiczKf1qtCDAxVxH7kGHSkEBDUQFnoECBcQAQ&url=https%3A%2F%2Fpt.wikipedia.org%2Fwiki%2FFloresta_dec%25C3%25ADdua_temperada&usg=AOvVaw3XaQfAdDYOGJhfXHwpY9l4&opi=89978449][florestas decíduas]]. Ademais, outros fatores como tipo de vegetação, umidade do solo, temperatura, são fatores que impactam a possibilidade de medição em grande escala de Rs. Porém, com o uso de satélites, essas limitações podem ser ultrapassadas, já que provem imformação continua na dimensão espacial e temporal.
+Os objetvos desse estudo são: investigar a perfomance de Random forest e 3 algoritmos classicos para estimação de Rs usando dados /in situ/ e de satélites. Avaliar a perfomance de observações de satélites para temperatura da superfície e umidade do solo e avaliar a perfomance de LST de dia e de noite em escala diária e mensal.
+
+* Materiais e Métodos
+** Área de estudo
+Foi escolhido a área do observatório de [[https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjHzrTqrNCDAxXmHbkGHc9KBugQFnoECCgQAQ&url=https%3A%2F%2Fwww.ontarioparks.com%2Fpark%2Fturkeypoint&usg=AOvVaw0jXVnf9WUXR3fu0J-ySL6E&opi=89978449][Turkey Point]], onde existem duas torres de Eddy covariance.
+** Dados
+Rs foi medido usando câmaras de solo automaticas de 2014 até 2019, com resolução temporal de 30 minutos. Os dados primeiros foram olhados para assegurar a qualidade, e depois foi realizado a média entre trodas as camâras para determinar um valor espacialmente representativo. As medições então foram feitas para determinar a média diária e mensal de Rs, temperatura e umidade do solo e equipara-las com a resolução temporal do satélite.
+As observações de LST foram retiradas do [[https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwjclu6u69CDAxWOIbkGHWYLBOwQFnoECAkQAQ&url=https%3A%2F%2Fmodis.gsfc.nasa.gov%2F&usg=AOvVaw0d2tLHmG8FLU6Ljp6qReiK&opi=89978449][MODIS]], com utilização do [[https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwiMlL_E69CDAxUDEbkGHZssA4EQFnoECAwQAQ&url=https%3A%2F%2Fwww.earthdata.nasa.gov%2Flearn%2Ffind-data%2Fnear-real-time%2Fviirs&usg=AOvVaw2SiywwhgZH7SxTl6-xPI-C&opi=89978449][VIIRS]]. Do MODIS, foi retirado o Aqua LST e o produto da emissividade (MYD21A2), que é um compósito livre de nuvens com resolução de 8 dias e 1 km. Ademais conseguiram o LST e o produto de emissividade (VNP21A2) do VIIRS, na mesma resolução do anterior. Como pretende-se aposentar o MODIS, se mostra imperativo acessar a consistência dos resultados de produtos do MODIS, com seu sucessor, VIIRS[fn:1]. Dado as diferenças entre os equipamentos, as analises foram feitas separadamente para fins comparativos. A série temporal mensal foi feita fazendo a média dos dados dentro de cada mês.
+As observações da umidade do solo foram retiradas do [[https://gmao.gsfc.nasa.gov/GMAO_products/SMAP_L4/][SMAP Level 4]], onde retirou-se o produto de umidade superficial e umidade na zona de raíz. As observações a nível solo foram usadas para estimar a umidade de solo de \( ~0-5 \; cm \) de profundidade. As medições diárias foram juntadas para obter datasets de 8 dias, para que sejam iguais às observações de 8 dias do LST. Fez-se a média do dataset original para obter o dataset mensal.
+** Métodos
+Para estimar Rs, eles utilizaram três modelos empíricos bastante usados, em junção com o mecanismo de Random Forest:
+
+1) [[https://doi.org/10.1002/2017GB005644][Q10]]
+2) [[https://doi.org/10.1029/2008JG000851][Modelo Gamma]]
+3) [[https://doi.org/10.1029/2009JG001089][Modelo Gaussino-Gamma]]
+4) Random Forest
+
+Alguns parametros da Random Forest foram:
+
+- Número de árvores: 100
+- Número de preditores para cada nó da árvore: 2
+
+Onde as varíaveis preditas foram: Temperatura do solo e umidade do solo. As variáveis explicatórias usadas foram: Medições /in situ/, observação de satélites (MODIS LST e VIIRS LST) e umidade do solo (SMAP).
+Primeiramente os Rs foram estimados em escalas diárias e mensais usando medições /in situ/ de umidade e temperatura, usando as equações dos modelos. Posteriormente, dados do MODIS e LST, diurnos e noturnos, foram usados, junto com dados SMAP para estimar Rs numa escala diária e mensal para cada um dos 4 modelos.
+Para a avaliação do modelo, foram escolhidos medições concomitantes de Rs do solo e umidade, que possuem um match dos dados adquiridos dos datasets de 8 dias do MODIS e do VIIRS. Para a avaliação do modelo, foram usados os seguintes indicadores: coeficiente de determinação \( R^2 \), RMSE e o bias foi calculado para cada um dos modelos e para cada tipo de dado e comparado com as médições /in situ/.
+* Resultados
+Todos os modelos conseguiram representar bem as variações sazonais do Rs, independente de onde os dados vieram, [[fig:1][nota-se essa trend sazonal]].
+** Perfomance de Rs usando dados /in situ/
+Os modelos estimados pode ser visto na [[fig:3][figura abaixo]]. Todos os métodos foram estatisticamente significantes \( (p_{valor} < 0.0001) \) quando se fala na relação entre os valores de Rs medidos e estimados. O \( R^2 \) em florestas decíduas foi consistentemente mais baixo que lugares permantemente verdes[fn:2]. RMSE, foi menor e o bias próximo a zero para todos os Rs no TP3, tanto em escala diária quanto mensal.
+O modelo Gaussiano-Gamma consistemente teve Rs preditos com maiores \( R^2 \) e menor RMSE, em escala mensal e diária. Não se teve ganho substancial usando-se um modelo mais complexo de Random Forest. De qualquer forma, ela pode ser melhor, se considerarmos mais fatores que a temperatura e umidade do solo.
+
+#+CAPTION: Rs estimado para TPD
+#+NAME: fig:1
+[[file:./Artigos/Pdf/Artigo 6/fig1.png]]
+
+#+CAPTION: Rs estimado para TP3
+#+NAME: fig:2
+[[file:./Artigos/Pdf/Artigo 6/fig2.png]]
+
+#+CAPTION: Comparação entre Rs estimado e medido
+#+NAME: fig:3
+[[file:./Artigos/Pdf/Artigo 6/fig3.png]]
+** Perfomance de estimação do Rs usando dados de satélites de LST e umidade do solo
+
+
+
+
+
+* Conclusão
+
+* Footnotes
+[fn:2] Eles fizeram a medição em 2 lugares, um decíduo, outro evergreen, sempre verde. O decíduo tem nome de TPD e o evergreen de TP3. O evergreen é uma plantação de pinheiros.
+
+[fn:1] Para saber mais, acesse [[https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwi3r-6t7NCDAxVRLLkGHTqsDwYQFnoECB4QAQ&url=https%3A%2F%2Fdarktarget.gsfc.nasa.gov%2Fproducts%2Fviirs-modis%2Finstrument-differences&usg=AOvVaw3iRJhWbTT48BIE5irU1WHE&opi=89978449][Diferenças entre MODIS e VIIRS]].

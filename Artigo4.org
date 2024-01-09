@@ -1,0 +1,113 @@
+:PROPERTIES:
+:ID:       fb5a24b3-1513-49f3-b495-7542b27f433a
+:END:
+#+title: Artigo 4
+#+date: [2024-01-07 Sun 20:20]
+* Importamte
+Satélite: Sentinel
+Métricas: \( R^2 \), RMSE e RPD
+
+* Resumo
+
+
+* Tabela de Siglas
+| Sigla    | Significado                                         |
+|----------+-----------------------------------------------------|
+| POC      | Particulate organic carbon                          |
+| CNN-LSTM | Convolutional Neural Network–Long Short-Term Memory |
+| BP       | Backpropagation Neural Network                      |
+| GRNN     | Generalized Regression Neural Network               |
+| CNN      | Convolution Neural Network                          |
+| RPD      | Residual Prediction deviation                       |
+| MNDCI    | Maximum Normalized Difference Carbon Index          |
+| SPM      | Suspended Particulate Matter                        |
+| Chl-a    | Clorofila-a                                         |
+| PLSR     | Partial Least squares regression                    |
+| ANN      | Artificial neural networks                          |
+| SVM      | Support vector machines                             |
+
+* Resumo/Introdução
+POC são uma categoria de carbono que é incapaz de se dissolver em água de lago, se suspendendo em colunas de água. O sensoriamento sensivel de POC por meio de satélites pode ser um bom método de quantificar, a longo prazo, às tendências de POC em águas. POC são visíveis nas bandas perto do infra-vermelho. A existência de POC em águas de lago pode ser vista como um diminuição da transparência da água e a intensidade da luz que é medida é diretamente proporcial com a concentração e propriedades do particulado. Ademais, POC tem uma relação direta com outros parâmetros de qualidade da água, como a Chl-a, SPM, e a turbidez.
+Antigamente, so tinhamos medições empiricas, semi-analíticas ou analíticas para fazermos essa medição, porém, vem se mostrando incapaz dado o complexo cenário aquático. Então, ao longo dos anos, com a evolução do ML, muitos cientistas vem tentando usar técnicas que possibilitem a relação entre medições de satélite e POC.
+Os objetivos desse trabalho incluem a construção de um modelo de ML, com a dimensão temporar, para avaliar a predição prevista de concentrações de POC em lagos. Avaliar a perfomance de medidas de satélites para estimar POC em lagos.
+
+* Materiais e Métodos
+** Área de estudo
+A área de estudo foi o lago [[https://en.wikipedia.org/wiki/Chao_Lake][Chaohu]], com área de 780 \( km^2 \)
+** Dados e Pré-processamento
+Eles retiraram um total de 38 amostras de água em outubro de 2022 e junho de 2023. Onde elas foram testadas para determinação de massa de POC.
+** Dados de satélite
+Os dados utilizados foram do [[https://scihub.copernicus.eu][MSI do Sentinel-2A]], com a mesma resolução temporal que os dados do lago. As imagens estão no nível L2A foram pré-processadas por calibração radiométrica e correção atmosférica. Todas as bandas das imagens foram redimensionadas para 10m de resolução espacial, usando o software [[https://step.esa.int/main/snap-7-0-released/][SNAP 7.0]]. Posteriormente, foram importadas para o [[https://www.envi.com.br/][ENVI 5.3]], para serem feitos crops e mosaicos. Por fim, utilizando o ArcGIS 10.6, extrai-se a refletância em múltiplas bandas de 38 pontos de amostragem nas duas diferentes datas[fn:1].
+** Pré-processamento dos dados
+A banda sensível de análise foi escolhida utilizando o coeficiente de correlação \( R^2 \) analisado entre refleância de banda única, combinação de refletância de banda e a concentração de POC nos locais de análise. Para determinar que combinações de banda que tiveram a maior correlação com a concentração de POC, aquelas com maior valores de \( R^2 \) foram escolhidas para e mescladas. Surge uma matriz \( 38 \times 10 \), onde 38 são os número de pontos e 10 são o número de combinações de bandas. As refletâncias de banda foram normalizadas para remoção de fatores ambientais.
+** Métodos
+*** BP
+Informações sobre o BP: [[https://en.wikipedia.org/wiki/Backpropagation][Backpropagation]]
+Por métodos iterativos, o número de camadas escolhidas foram 6, onde o número de neuronios nas camadas totalmente conectadas foram 100.
+*** GRNN
+Informações sobre o GRNN: [[https://en.wikipedia.org/wiki/General_regression_neural_network][Generalized Regression Neural Network]]
+Uma função gaussiana foi usada com função de ativação. Existem o mesmo número de neurônios na camada mode que na camada input. A função de transferência é dada por [[eq:1][(1)]], onde as equações [[eq:2][(2)]], [[eq:3][(3)]] são duas equações de neurônios na camada de soma, respectivamente. A equação [[eq:4][(4)]] é usada para calcular o número de neurônios na camada de saída. GRNN so precisa de ajustar um parâmetro, que é SPREAD, que por experimentação, para eles foi 0.5.
+
+#+NAME: eq:1
+\begin{equation}
+\label{eq:1}
+T_i = \exp^{\frac{\left(X-X_i\right)^T\left(X-X_i\right)}{2 \sigma^2}} \quad i=1,2,...,n
+\end{equation}
+#+NAME: eq:2
+\begin{equation}
+\label{eq:2}
+S_D=\sum_{i=1}^{n}T_i
+\end{equation}
+#+NAME: eq:3
+\begin{equation}
+\label{eq:3}
+S_N=\sum_{i=1}^{n}T_iY_i
+\end{equation}
+#+NAME: eq:4
+\begin{equation}
+\label{eq:4}
+Y=\frac{S_N}{S_D}
+\end{equation}
+*** CNN
+Informações sobre o CNN: [[https://en.wikipedia.org/wiki/Convolutional_neural_network][Convolutional Neural Network]]
+
+*** CNN-LSTM
+Informações sobre o CNN-LSTM: [[https://en.wikipedia.org/wiki/Long_short-term_memory][Long Short-Term Memory]]
+Para eles, tiveram 800 épocas, tamanho de "batelada" (mini-batch) foram 16, dropout de 0.3 e taxa de aprendizado de 0.001. A função de ativação foi a ReLU. A função de padding foi a "Same". O algoritmo de optimização foi o [[https://keras.io/api/optimizers/adam/][ADAM]].
+** Avaliação
+O modelo foi avaliado usando o coeficiente de determinação \( R^2 \), o erro quadrático médio (RMSE) e o [[https://search.r-project.org/CRAN/refmans/chillR/html/RPD.html][desvio de predição residual (RPD)]].
+** Modelagem
+Usando dados do Sentinel-2A, 4 modelos de ML foram aplicados para modelagem do POC no lago. O dataset de refletância e dados da superfície da água dos 38 pontos foram usados como datasets, onde eles foram randomicamente divididos entre treinamento e teste, onde eram 26 grupos de treino e 12 de teste. O melhor modelo foi escolhido e comparativamente analisado contros os outros.
+* Resultados
+** Análise de relevância
+A magnitude do coeficiente de correlação de Pearson é muito usado como parametro de avaliação. Para o Sentinel-2A, as bandas selecionadas foram Banda 1, 5, 6, 7, 8, 9 e 11. E a matriz de correlação é apresentada na [[fig:1][Figura 1]]. Para bandas unitárias, a banda 6 obteve maior correlação com um valor de 0.626. Para combinações, os valores variaram de -0.500 a 0.677. Utilizando análise de sensitividade, as bandas escolhidas foram B5, B6, B7, B8, B9, B9/B1, B9/B11, B11-B9, *B1 e *B2. Os resultados dos modelos são apresentados na [[tab:1][Tabela 1]].
+
+#+CAPTION: Tabela 1
+#+NAME: tab:1
+[[file:./Artigos/Pdf/Artigo 4/fig2.png]]
+
+
+#+CAPTION: Figura 1
+#+NAME: fig:1
+[[file:./Artigos/Pdf/Artigo 4/fig1.png]]
+
+** Análise da predição de POC
+CNN-LSTM tem o melhor valor de predição enquanto BP possui o pior.
+
+#+CAPTION: Comparação entre modelos
+#+NAME: fig:2
+[[file:./Artigos/Pdf/Artigo 4/fig3.png]]
+** Resultado da análise de inversão
+Para os 4 modelos, a concentração de POC foi calculada na região de interese com CNN-LSTM tendo o melhor resultado, com valores similares ao valor dos dados de campo.
+
+#+CAPTION: Comparação entre modelos
+#+NAME: fig:3
+[[file:./Artigos/Pdf/Artigo 4/fig4.png]]
+* Discussão
+Por mais que o resultado tenha sido bom, estabelecer a concentração de POC atráves de modelos de inversão com alta aplicabilidade e acurácia preditiva ainda se mantém um desafio em lagos complexos. Na perspectiva do resultado da predição do modelo, BP performou muito mal, em termo de acurácia e estabilidade. Ele é sensível aos pesos iniciais definidos e tem tendência em ficar preso no "optimo local"[fn:2]. CNN-LSTM tem uma ótima generalização e provou que efetivamente consegue melhorar a acurácia e estabilidade na predição de POC. Álem disso, esse estudo demonstrou a capacidade do CNN-LSTM em modelar com um dataset pequeno.
+* Conclusão
+Em geral, CNN-LSTM é bom, com uma boa predição de POC na água utilizando dados de satélites. Esse método pode ser usado como um fácil meio de conseguir dados de POC em superfícies de lagos.
+* Footnotes
+[fn:2] Caso de "torturar os dados até que confessem"?
+
+[fn:1] Estranhamente, só tem 2 pontos temporais, mas 38 pontos espaciais. Para mim é estranho so ter essas 2 datas.

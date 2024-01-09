@@ -1,0 +1,150 @@
+:PROPERTIES:
+:ID:       3c22d265-2475-45c2-a537-b6c18b764eed
+:END:
+#+title: Artigo 1
+
+* Siglas
+| Sigla | Significado                                         |
+|-------+-----------------------------------------------------|
+| GPP   | Gross Primary Production                            |
+| TER   | Total ecosystem repiration                          |
+| SPEI  | Standardized Precipitation Evapotranspiration Index |
+| PDSI  | Palmer drought severity index                       |
+| SM    | soil moisture                                       |
+| TWS   | Terrestrial water storage                           |
+| GRACE | Gravity Recovery And Climate Experiment             |
+| EBF   | Evergreen broadleaf forest                          |
+| MF    | Mixed Forest                                        |
+| GRA   | Grasslands                                          |
+| CRO   | Croplands                                           |
+| SIF   | Solar Induced flourescence                          |
+| Rh    | Relative umidity                                    |
+| CAPE  | Convective available potential energy               |
+
+* Introdução/Abstract
+A pesquisa em geral se revolve em torno da seca, onde eles querem entender como a seca impacta o ambiente. Primeiro eles primeiro vão quantificar o impacto da seca na utilização do carbono na China.
+Na introdução eles fazem uma explicação de por que é importante estudar esse mecanismo e por que ele impacta o ambiente. A seca causa uma diminuição na capacidade da vegetação e do solo de absorverem CO2, além de diminuir a produção primaria das plantas, capacidade de absorção da luz solar e conversão em açúcar.
+
+* Objetivos
+Os objetivos desse estudo são:
+ 1. Explorar os mecânismos da seca e suas características durante as mudanças climáticas por uso de machine learning e dinâmicas atmosféricas.
+ 2. Explorar o efeito da seca na absorção de carbono, combinando dados de satélites, dados medidos, modelos climáticos, modelos da superfície terrestre, modelos de hidrologia global e modelos de dinâmica de vegetação.
+
+* Material e Métodos
+** Medição das torres de fluxos da covariância de Eddy e dados /in situ/ de estações metereológicas
+Eles vão focar em 4 tipos de áreas: EBF, MF, GRA e CRO. Pois é mais fácil assim dividir para a matriz de Eddy. Ademais, paa explorarem em áreas de maiores escalas, eles dividiram a China em 8 regiões.:
+
+#+CAPTION: Regiões da China
+#+NAME:fig:regioes
+
+[[./Artigos/Pdf/Artigo 1/fig1.png]]
+
+*** Dados
+Os dados, dessa parte da pesquisa, do fluxos de carbono e de água, junto com os dados metereologicos vem do [[https://fluxnet.org/data/fluxnet2015-dataset/][FLUXNET]] e do [[http://www.chinaflux.org/enn/index.aspx][ChinaFLUX]]. As variáveis usadas foram \( T_{Ar} \), SM, GPP, NEP e TER. GPP é vindo do modelo de partição e NEP é feito subtraindo TER do GPP.
+Eles usaram dados SIF de satélites, em especial, do satélite *OCO-2* e *MODIS*, de *2000 a 2020*, com *resolução temporal de 4 dias e 0.5° de resolução espacial*.
+Para o GPP, utilizaram o *MODIS*, com *resolução temporal de 8 dias e 500m de resolução espacial*.
+Para dinâmicas do clima, usaram dados mensais de precipitação, 2m de temperatura do ar, \( T_{2m} \), umidade relativa, \( RH \) e Energia potencial convectiva disponível, \( CAPE \), durante 1979-2020 do 20CR.
+Ademais, o 20CR, tem dados da variabilidade troposférica de 1878-Atual, com resolução temporal de 6 horas e resolução espacial de 2°. Mas eles realizaram uma interpolação para 0.5° x 0.5°.
+
+** GRACE/GRACE-FO e ERA5
+Para o TWS, eles usaram dados do GRACE/GRACE-FO, para caracterizar secas dentro de 2002-2021 na China. Eles usaram um modelo de camara para fazer uma média das séries temporais dos 3 datasetes do GRACE/GRACE-FO.
+
+o ERA5 é um reanálise de dados do ECMWF, que tem dados de 1979-Atual, com resolução temporal de 1 hora e resolução espacial de 0.25° x 0.25°. Nesse artigo eles usam 12 variáveis climaticas mensais:
+
+#+CAPTION: Variáveis climáticas mensais/diárias
+#+NAME: variaveis_climaticas
+
+| Variável                                                         | Simbolo       |
+|------------------------------------------------------------------+---------------|
+| Fluxo de calor sensível na superfície                            | N/A           |
+| FLuxo de calor latente                                           | N/A           |
+| Preciptação                                                      | N/A           |
+| Pressão do ar                                                    | \( ps \)      |
+| Neve                                                             | N/A           |
+| 2m de temperatura do ar                                          | \( T_{2m} \)  |
+| Temperatura de orvalho                                           | \( T_{dew} \) |
+| Radiação superficial de subsidência de comprimento de onda longo | rlds          |
+| Radiação superficial de subsidência de comprimento de onda curto | rsds          |
+| inibição convectiva                                              | N/A           |
+| Fluxo de convergencia de umidade                                 | N/A           |
+| Velocidade do Vento                                              | N/A           |
+
+** Round da Variável
+Calcuraram TWSA-DSI de onde extraíram a duração da seca, intensidade e severidade. Esse índice, se positivo indica que TWSA é altro que o período normal e pode ser usado para medir o quão molhado está. O famoso, "ta chovendo mais que o normal". Um evento de seca é indicado quando TWSA-DSi < 0.8.
+** Análise de sensitividade
+Depois de investigarem as mudanças na termodinâmica da atmosfera e a mudança de padrões quando uma seca esta ocorrendo, utilizaram um modelo de /Random Forest/, para analisar os mecanismos que estão por baixo disso e qual a sensitividade do TWSA-DSI de acordo com as variáveis. Eles construiram um modelo de TWSA para cada grid com as varíaveis [[variaveis_climaticas][acima]], e a contruibuição de cada uma é avaliada no período obserdado (2002-2021), históricamente (1985-2014) e no futuro (2071-2100).
+** Pré-processamento e análise de incertezas
+Incialemente ele quantificaram as anomalias de das variáveis GPP, TER, NER, temperatura, SM e TWSA nos 4 tipos de divisão usando o FLUXNET, realizam uam regressão linear em cada grid, e subtrair o valor da regressão do valor original. Anomalias são detectadas subtraindo um valor diário de um valor médio entre 15 dias. Depois disso, eles juntam as varíaveis, diárias, e os fluxos de carbono, duas a duas, e realizam uma regressão linear. O valor dos coeficientes de regressão indicam sua sensitivida à calor e água. Para projetar futuras secas e seus impactos na absorção do carbono, implementaram 96 combinaçãoes de cenários do [[https://impactoclima.ufes.br/conteudo/projecoes-de-clima-cmip5][CMIP5]].
+
+* Resultados
+** Termodinâmica da atmosfera e dinâmica características durante secas
+Parte menos importante, calculam TWSA-DSI de dados do TWSA do GRACE/GRACE-FO "[[https://grace.jpl.nasa.gov/data/get-data/jpl_global_mascons/][mascon solutions]]", calculando as diferenças médias das variáveis climáticas sob tempo seco e tempo úmido. Tem conclusões sobre temperatura, umidade, CAPE, etc. Menos importante para o que queremos.
+Sob o carbono, em eventos de seca, o /budget/ de carbono é negativo, sendo calculado as anomalias do SIF e GPP.
+** Sensitividade do TWSA-DSI
+Menos importante para o que queremos.
+
+#+CAPTION: Sensitividade do TWSA-DSI
+#+NAME: sensitividade
+ [[./Artigos/Pdf/Artigo 1/fig2.png]]
+
+** Impacto da seca na absorção de carbono
+Para explorar os efeitos da seca na capacidade de absorção de carbono do ambiente, eles usaram o dataset do FLUXNET de 2015 em junção com o China FLUX dataset. Calculando o coeficiente de pearson entre o fluxo de carbono (GPP, TER, NEP, etc) e as [[variaveis_climaticas][variáveis ambientais]] quando o clima está quente, ou seja, quando a média da semana excede o 60° da temperatura diária do local. Retirando as anomalias, eles avaliaram a sensitividade do fluxo de carbono para as variáveis ambientais com aumento da temperatura \( T_{air} \), nos dando a seguinte figura [fn:1] :
+
+#+CAPTION: Sensitividade do fluxo de carbono para as variáveis ambientais
+#+NAME: sensitividade_fluxo_carbono
+ [[./Artigos/Pdf/Artigo 1/fig3.png]]
+** Mudanças observadas e previstas em condições de seca e seus impactos na absorção de carbono
+Basicamente, na China, vai ter um aumento na quantidade de secas, em geral, em áreas que são menos resilientes e mais sensíveis. Esse aumento de seca tem uma correlação na diminuição da absorção de carbono. Na área do Tibete, interessantemente, tem uma tendência de ficar mais molhado, mas isso devido ao derretimento de geleiras que lá tem[fn:2].
+Consistentemente, uma crise hidríca leva a um menor GPP.
+
+#+CAPTION: Mudanças observadas e previstas em condições de seca e seus impactos na absorção de carbono
+#+NAME: mudancas
+ [[./Artigos/Pdf/Artigo 1/fig4.png]]
+
+#+CAPTION: Análise Historica, Observada e Futura
+#+NAME: analise
+ [[./Artigos/Pdf/Artigo 1/fig5.png]]
+
+* Discussão
+** Avaliando a performance de ML em simulações TWS
+Para avaliar o quão robusto o modelo deles eram, eles selecionaram 5 índices:
+1. Pearson Correlation Coefficient (PCC)
+2. [[https://en.wikipedia.org/wiki/Nash%E2%80%93Sutcliffe_model_efficiency_coefficient][Nash-Sutcliffe Efficiency]] (NSE)
+3. Normalized root Mean square error (NRMSE)
+4. Mean Square Error (MSE)
+5. [[https://en.wikipedia.org/wiki/Mean_absolute_percentage_error][Mean Absolute Percentage Error (MAPE)]]
+
+O modelo performou muito bem, com \( PCC = 0.99 \), \( NSE = 0.87 \), \( MSE = 0.2mm^2 \) e \( MAPE = 0.15\% \).
+
+#+CAPTION: Performance do modelo de ML
+#+NAME: performance
+ [[./Artigos/Pdf/Artigo 1/fig6.png]]
+
+A performance foi avaliada em 8 regiões diferentes, onde 7 das regiões tem alta correlação \( PCC > 0.6 \)
+
+** Comparação do CMIP6 e CMIP5
+
+Em geral os resultados do CMIP5 foram consistentes com as simulações CMIP6, dando suporte ao resultado dos autores. A projeção de queda de absorção do CO2 vem junto com a projeção de aumento do mesmo por fertilização.
+** LImitações e incertezas
+Eles usaram a ANOVA para decompor a contribuição de incerteza das diferentes fontes. A influencia do GCM é o principale contribuinte para a incerteza geral. Certas limitações são:
+
+- Alata complexidade das variáveis para a construção do modelo, além da contribuição huaman e fatores geofísicos que afetam essas variáveis.
+- Número limitado de lugares de observação do FLUXNET além do grande uso de GCM
+
+#+CAPTION: Decomposição da incerteza
+#+NAME: incerteza
+ [[./Artigos/Pdf/Artigo 1/fig7.png]]
+
+* Conclusão
+Explicam os mecanismos físicos de secas baseadas em TWSA e a mudança da absorção do carbono devido essas secas. Em geral, maior emissão de carbono vai levar a maiores impactos da seca e diminuição do GPP e a queda do GPP causado pela seca é a principal razão para a mudança da absorção global terrestre.
+
+
+
+
+
+
+
+* Footnotes
+[fn:2] Estranhamente, achei que o artigo da uma enfase em como o aquecimento e derretimento das geleiras de lá pode melhorar o ecossistema do tibet. Não sei se é propaganda chinesa, pode ser so coisa da minha cabeça.
+
+[fn:1] Eu sei que eles usaram a regressão linear e entendo o ponto, até mesmo o \( p-valor<0.05 \), mas me parece estranho tirar conclusões sobre tendencia da reta, ou dos dados, com valores de \( R^2 \ll 0.5 \) na grande maioria dos casos

@@ -1,0 +1,124 @@
+:PROPERTIES:
+:ID:       18bdf635-4108-4891-ab70-3f7678d31b7f
+:END:
+#+title: Artigo 3
+#+date: 2024-01-05
+* Resumo
+
+
+* Tabela de Siglas
+| Sigla | Significado           |
+|-------+-----------------------|
+| GLM   | Global Land-mapped 1° |
+|       |                       |
+
+* Resumo/Introdução
+Observar o CO2 vem se tornando cada vez mais importante no mundo moderno, já que emissões e outras fontes poluidoras vem aumentando sua concentraçaõ ao longo dos anos. Dado isso, é relativamente difícil fazer esse monitoramento em escala global, dado que o método mais empregado, uso de torres de observação, não abrangem a totalidade do globo, nem se quer uma fração disso.
+Sendo assim, surge a necessidade de outros métodos de observação, como o uso de satélites, que podem observar uma área muito maior, e com isso, ter uma visão mais ampla do problema. Porém, o uso de satélites também tem suas limitações, como a resolução espacial, que é a capacidade de distinguir objetos próximos, e a resolução temporal, que é a capacidade de observar um mesmo objeto em diferentes momentos.
+Existem diversos métodos que podem ser usados para uma reconstrução em resolução maior do XCO2, como métodos geoestatísticos, que enquanto conseguem, teoricamente, fazer o trabalho, ignoram problemas como fatores que afetam o XCO2, relativa perda de resolução e captura deficiente de variabilidade espacial e gradientes.
+Métodos estatísticos também podem ser usados, como a regressão linear, eles falham quanto na captura de relações que não são lineares. Com isso, métodos de Machine Learning (ML) podem ser usados, como Random Forest (RF) extreme gradient boosting (XGBoost), que foi usado no [[id:ab138f28-541b-4fc3-8928-8a36b9d52f3f][Artigo 2]].
+Nesse estudo, eles desenvolveram um novo método de ML, chamado SCatBoost, que é uma mistura de [[https://en.wikipedia.org/wiki/CatBoost][CatBoost]] juntando com elementos de informação espacial, onde eles vão usar esse método para fazer a reconstrução do XCO2 atráves da china de 2012 a 2019, com uma alta resolução de 1 km.
+
+* Materiais e Métodos
+** Dados e processamento
+*** Dados de XCO2
+Os dados de XCO2 foram retirados do GLM-XCO2 e podem ser encontrandos em  [[https://dataverse.harvard.edu/dataverse/harvard?q=XCO2][Harvard]]. A esolução dos dados é de 1°, e foi mapeado usando dados observados do GOSAT e OCO-2.
+*** Variáveis Influenciadoras
+As seguintes variáveis foram escolhidas para serem usadas no modelo:
+
+- Densidade Populacional (POP)
+- Produção Primaria Bruta (GPP)
+- Indice de Vegetação Normalizado (NDVI)
+- Temperatura (TMP)
+- Precipitação (PRE)
+
+Onde foram divididas em 3 grupos, sendo eles:
+
+- Atividades Humanas (POP e desenvolvimento econômico)
+- Vegetação (GPP, NDVI)
+- Clima (TMP, PRE)
+
+Atividades humaas podem ter impacto positivo ou negativo, vegetação podem aumentar a absorção de CO2 e reduzir a emissão de CO2, e clima pode ser importante na ocorrencia de CO2 na atmosfera.
+O nível de desenvolvimento econômico foi medido usando a quantidade de luz noturna (NTL), em que pode aumentar o consumo de nergia e emissão de CO2. O NTL foi obtido do [[https://ncc.nesdis.noaa.gov/VIIRS/][NPP-VIIRs]], do satélite [[https://en.wikipedia.org/wiki/Suomi_NPP][Suomi NPP]].
+Em geral, POP tem um efeito positivo no XCO2. O GPP, nesse estudo, tem resolução espacial de 0.05° e foi mapeado pelo [[https://climatedataguide.ucar.edu/climate-data/global-dataset-solar-induced-chlorophyll-fluorescence-gosif][GOSIF]], que é baseado num produto do OCO-2. O NDVI foi obtido do satélite [[https://docs.terrascope.be/#/Satellites/SPOT-VGT/MissionInstruments][SPOT/VEGETATION]]. O TMP e PRE foram retirados do seguinte [[http://loess.geodata.cn/][link]][fn:1].
+
+| Variável | Resolução Espacial | Fonte                                                                      | Site                                          |
+|----------+--------------------+----------------------------------------------------------------------------+-----------------------------------------------|
+| NTL      | 1.5 km x 1.5 km    | Institute of Remote Sensing and Digital Earth, Chinese Academy of Sciences | https://www.zybuluo.com/novachen/note/1162587 |
+| POP      | 1 km x 1 km        | Oak Ridge National Laboratory                                              | https://landscan.ornl.gov/                    |
+| GPP      | 0.05° x 0.05°      | Global Ecology Group                                                       | https://globalecology.unh.edu                 |
+| NDVI     | 1 km x 1 km        | Resource and environment science and data Center                           | https://www.resdc.cn/                         |
+| TMP      | 1 km x 1 km        | National Earth System Science Data Center                                  | http://loess.geodata.cn/                      |
+| PRE      | 1 km x 1 km        | National Earth System Science Data Center                                  | http://loess.geodata.cn/                      |
+
+*** Processamento
+Primeiro, todos os dados foram colocados na mesma resolução espacial, 1 km x 1 km, pelo método de [[https://pt.wikipedia.org/wiki/Interpola%C3%A7%C3%A3o_bilinear][interpolação bilinear]]. Depois, as variáveis foram agregadas e colocadas na resolução de 1° x 1°, que é a resolução do XCO2, onde foram normalizadas, para retirada da dimensão efeito.
+** Modelo SCatBoost
+Não acho que a explicação do modelo seja relevante para o trabalho. Segue que usaram o ScatBoost, para modelar a relação entre XCO2 e os fatores influenciadores a uma resolução de 1°. Após isso, fizeram a reconstrução do XCO2 a uma resolução de 1km usando o modelo. Foram comparados esse modelo com o a regressão linear, [[https://pro.arcgis.com/en/pro-app/latest/tool-reference/spatial-statistics/how-geographicallyweightedregression-works.htm][GWR]], [[https://www.ibm.com/topics/random-forest][RF]], [[https://www.nvidia.com/en-us/glossary/data-science/xgboost/][XGBoost]], [[https://en.wikipedia.org/wiki/LightGBM][LightGBM]] e CatBoost.
+A perfomance foi avaliada usando o coeficiente de determinação \( R^2 \), [[https://mariofilho.com/mae-erro-medio-absoluto-em-machine-learning/][erro absoluto médio]]  (MAE) e erro quadrático médio (RMSE).
+* Resultados e Discussão
+** Importancia das variáveis
+A importancia de cada variável foi avaliada usando o CatBoost, onde todas tiveram importância maior que \( 2\% \). Onde TMP foi a que mais apresentou importancia, seguida de POP. A menor foi GPP, com \( 9\% \), portanto, todas as variáveis foram usadas no modelo.
+
+#+CAPTION: Importancia das variáveis
+#+NAME: fig:importancia
+[[./Artigos/Pdf/Artigo 3/fig1.png]]
+
+** Perfomance do modelo
+*** Comparação de modelos
+Os modelos foram comparados entre si, num [[fig:comparacao][gráfico de XCO2 observado x XCO2 predito]], o ScatBoost foi o que apresentou melhor perfomance, com \( R^2 = 0.98 \), \( RMSE = 0.09 \) e \( MAE = 0.07 \). Interessantemente, não foi tão melhor que o CatBoost, que apresentou \( R^2 = 0.97 \), \( RMSE = 0.12 \) e \( MAE = 0.09 \). Quando comparados usando [[fig:comparacaoCV][validação cruzada (CV)]], ScatBoost novamente foi o melhor, seguido, dessa vez, pelo GWR. Para o medelo de ML, o melhor, novamente, foi o CatBoost. O Scatboost, consegue aproveitar o melhor dos dois mundos, conseguindo modelar relações não lineares e consegue superar limitações de relações espacias.
+
+#+CAPTION: Comparação de modelos
+#+NAME: fig:comparacao
+[[./Artigos/Pdf/Artigo 3/fig2.png]]
+
+#+CAPTION: Comparação de modelos usando CV
+#+NAME: fig:comparacaoCV
+[[./Artigos/Pdf/Artigo 3/fig3.png]]
+
+Quando [[fig:reconstrucao][reconstruindo o XCO2 para a resolução de 1 km]], novamente o ScatBoost foi o que apresentou resultados mais similares ao original, fazendo com que possa ser usado para calibração do GLM-XCO2.
+
+#+CAPTION: Reconstrução do XCO2
+#+NAME: fig:reconstrucao
+[[./Artigos/Pdf/Artigo 3/fig4.png]]
+*** Validação Espaço-Temporal
+Para validar o modelo, foi feito uma [[fig:validacao][validação espaço-temporal]], onde foi comparado o XCO2 observado com o XCO2 predito pelo ScatBoost. Os valores variaram de \( 0.98 \) a \( 0.99 \) de \( R^2 \), já [[fig:validacaoCV][com CV]], variaram de \( 0.81 \) a \( 0.88 \). Na dimensão temporar, por mais que tiveram um pouco de variação com CV, todas se manteram com mais que \( 0.8 \) de \( R^2 \).
+
+#+CAPTION: Validação Espaço-Temporal
+#+NAME: fig:validacao
+[[./Artigos/Pdf/Artigo 3/fig5.png]]
+
+#+CAPTION: Validação Espaço-Temporal com CV
+#+NAME: fig:validacaoCV
+[[./Artigos/Pdf/Artigo 3/fig6.png]]
+*** Validação de Precisão
+Utilizando dados de XCO2 de Waliguan monitoring station, de 2012-2016, de [[http://www.ncdc.ac.cn/portal/][National Glacial Permafrost Desert Science Data Center]], em junção com o GLM-XCO2, [[tab:validacaoPrecisao][obtiveram um bom resultado]], com um \( RMSE < 2 ppm \), com o modelo deles tendo maior acuracia \( RMSE = 1.63 \; ppm, \; MAE = 1.62 \; ppm \)
+
+#+CAPTION: Validação de Precisão
+#+NAME: tab:validacaoPrecisao
+| Dados     | RMSE |  MAE |  MAPE |
+|-----------+------+------+-------|
+| SCatBoost | 1.63 | 1.62 | 0.41% |
+| GLM-XCO2  | 1.94 | 1.90 | 0.48% |
+
+*** Tendencias espaço-temporais na China
+Em geral, a [[fig:tendencias][acurácia do resultados foram altas e seguiu o que era esperado]], áreas mais desenvolvidas apresentaram maior XCO2 e áreas com menor XCO2 anuais apresentaram maior vegetação e menos urbanização, em concordancia a [[fig:importancia][tendência de importancia das variáveis]].
+Todas as regiões chinesas apresentaram uma [[fig:tendenciasSignificancia][tendência de aumento nos níveis de CO2]],com aumentos de pelo menos 2ppm/ano. Áreas com maiores crescimento, estão ligadas a rápida urbanização e desenvolvimento econômico.
+
+#+CAPTION: Tendencias espaço-temporais na China
+#+NAME: fig:tendencias
+[[./Artigos/Pdf/Artigo 3/fig7.png]]
+
+#+CAPTION: Tendencias de aumento e nivel de significancia
+#+NAME: fig:tendenciasSignificancia
+[[./Artigos/Pdf/Artigo 3/fig8.png]]
+
+
+* Conclusão
+O modelo é eficiente para predizer, em nível nação e um tempo longo, o XCO2. O método é robusto, não apresentando variações absurdas ano a ano e pode ser utilizado para estudos mais profundos.
+
+* Limitações
+Os dados possuiam caracteristicas temporais unicas que não foram levadas em conta na predição. O método depende dos dados originais na resolução original de XCO2, o que pode ser temporalmente e espacialmente irregulares.
+* Footnotes
+
+[fn:1] Esse site nunca carregou para mim.
