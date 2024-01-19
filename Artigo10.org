@@ -1,0 +1,23 @@
+:PROPERTIES:
+:ID:       aafab5c5-9b4b-4929-b306-9b3f971bcae5
+:END:
+#+title: Artigo 10
+#+date: [2024-01-18 Thu 09:09]
+* Resumo
+O artigo não se encaixa pelo fato de, enquanto medir carbono particulado, ele usa um sistema in situ, que é mergulhado em água e não um satélite em si. A menção de satélite vem quando ele faz comparação do que ele achou, com modelos que utilizaram satélites, e essa comparação não é muito prolongada e não da base suficiente, na minha opinião, para ele se encaixar
+
+* Tabela de Siglas
+| Sigla | Significado                |
+| PSD   | Particle Size Distribution |
+|       |                            |
+
+* Resumo/Introdução
+
+
+* Materiais e Métodos
+
+
+* Resultados
+
+
+* Conclusão

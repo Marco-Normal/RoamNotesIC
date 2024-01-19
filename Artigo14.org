@@ -1,0 +1,72 @@
+:PROPERTIES:
+:ID:       d802abc7-93fb-426a-ac6b-d2f997f57397
+:mtime:    20240119152517 20240119135841
+:ctime:    20240119135828
+:END:
+#+title: Artigo 14
+#+date: [2024-01-19 Fri 13:58]
+* Observações
+Esses dados que não são de satélites, eu não tenho certeza deles, se realmente não são de satélites. Deixo nesse espaço, para que possa ser verificado depois.
+* Resumo
+** Dados não de satélites
+- ICARDA
+- EIA
+- FAOSTAT
+- EDGAR
+** Objetivos
+- Esse estudo vai analisar a produção marroquina num contexto de analisar neutralidade do carbono. Será analisado a pegada de carbono na supply chain de alimentação usando mecanismos de aprendizado de máquina. Ademais, ele fará um "link", entre a pegada de carbono e o mundo VUCA[fn:1].
+- Ademais, será analisado o impacto das emissões de carbono no aquecimento global. Para isso, ele proporcionará modelos de predições únicos e que serão utilizados imagens de satélite para avaliação da pegada de carbono.
+** Metodologia
+- O artigo está focado em analisar a pegada de carbono em uma região do marroco, em especial aquela que é responsável pela produção de tomates. Para isso, a rede de suprimentos será dividida em 3 partes: produção, transporte e distribuição. Para cada uma dessas partes, usam dados complementares para aumentar a precisão da análise.
+- Os pontos principais de analises são as emissões de GHG, indicadores de emissão de \( CO_2 \) e emissões de \( CO_2, CH_4, N_2O \). Utilizando os dados coletados, os modelos de ML são criados, que são:
+  + Regression Learner & Predictor
+  + K-mean Cluster
+  + Naive Bayes
+  + Neural Networks
+  + Random Forest
+  + AdaBoost
+- Uma vez treinados, eles são avaliados para saber se são adequados ou não para o problema. A partir disso, os modelos analisam padrões de emissões.
+*** Fase Produção
+- Para a fase de produção os dados que geram impactos no GHG foram escolhidos como sendo: Produção da fazenda, emissão de \( CH_4, CO_2 \; \text{e} N_2O \), onde eles foram analisados e mapeados. Usando o K-Mean, descobriu-se que a produção da fazenda é o fator mais importante.
+- Para a analise de emissões, foi-se feito uma análise com todos os modelos, para saber como eles se comportam.
+*** Fase Colheita
+- Foi-se analisado fatores como: Emissão em terras agrícolas, natureza em solo agrícola, emissão da fazenda, manejo de estrume, mudança do uso da fazendo, uso de energia da fazenda, uso  de fertilizantes.
+- Foram feito uma analise de dados categóricos, onde as variáveis foram categorizadas e analisadas. A partir disso, diferentes modelos foram testados e classificados usando métricas específicas.
+*** Fase Transporte
+- Para essa parte, o porto de Tangier foi escolhido como local de estudo. Para essa analise, foram considerados os diferentes combustíveis usados, como: diesel, gasolina, gás natural, assim como o meio de transporte e o tipo de veículo. Os atributos de cada combustível foram classificados de acordo com algorítimos de ML.
+- Para a analise de emissões, foi-se feito uma análise com vários modelos, onde o melhor foi o Random Forest, com a maior área embaixo da curva. Ademais, notou-se que essa indústria depende muito de gasolina e diesel para o transporte.
+** Métricas:
+ - \( R^2 \)
+ - MAE
+ - MSE
+ - RMSE
+ - AUC
+ - CA
+ - F-Score
+ - precision
+ - recall
+** Resultados
+- Descobriu-se que a plantação de tomates possui um impacto indiscutível sobre o GHG. Obteve-se um aumento da emissão de gases GHG a partir de 2015. Foi feito uma analise com todos os modelos para saber qual melhor descreve as relações, sendo o melhor o AdaBoost, com um \( R^2: 0.71, RMSE: 0.0812, MSE: 0.0066, MAE: 0.057 \)
+- Para a fase colheita, o melhor modelo foi o Random Forest, com um \( AUC=0.94 \). Importante ver que algumas variáveis serviram como "sinks" de carbono invés de emissoras, que ajudaram a diminuir a emissão de carbono.
+- Para a fase de transporte, o melhor modelo foi o Random Forest, com um \( AUC=0.94 \). Notou-se que a emissão de carbono é muito dependente do tipo de combustível usado, ao longo dos anos, vem aumentando consideravelmente as emissões vindo dessa fase de exportação
+
+* Tabela de Siglas
+| Sigla | Significado                                       |
+| GHG   | Green House Gases                                 |
+| VUCA  | Volatility, Uncertainty, Complexity and Ambiguity |
+|       |                                                   |
+
+* Resumo/Introdução
+
+
+* Materiais e Métodos
+
+
+* Resultados
+
+
+* Conclusão
+
+* Footnotes
+
+[fn:1]Isso definitivamente tem que ser um dos nomes mais estúpidos de todos. Peço perdão pra quem criou ou para o que é importante.

@@ -1,0 +1,37 @@
+:PROPERTIES:
+:ID:       2df22909-49f6-48be-bf0a-66a3f475b810
+:END:
+#+title: Artigo 7
+#+date: [2024-01-15 Mon 16:01]
+* Observações
+Esse artigo parece estar no bleeding edge do desenvolvimento, ou pelo menos tenta estar. Criaram uma melhoria para um sistema que já existe, porém, ainda não foi adotado em larga escala.
+A quantidade de dados usados é bastante grande. Ele não fala 4 dos satélites usados. No total, 6 satélites foram usados.
+* Resumo
+Os objetivos são: Apresentar melhoria no sistema BESS, quantificar energia a diária global a longo termo e fluxos de carbono e água.
+Avaliar esses produtos contra as medições do FLUXNET, através de diversas situações. Por fim, avaliar se a junção de medições solo-atmosfericas melhora a estimativa de propriedades do ecossistema.
+Resultados: Criação do BESS v2.0. A acurácia geral variou de  0.31<R^2<0.83, em geral, perfomando melhor numa escala mensal. Em comparação com outros modelos, ele não se sobressaiu tanto, perdendo em algumas estimativas para o FLUXCOM. As estimativas de fluxos anuais estão dentro da linha de possibilidade, concordando com outros modelos nas tendencias. Quando colocados em um mapa, em geral se teve grandes discordancias em escalas regionais. Em geral, o BESS foi um modelo com perfomance comparavel a modelos já testados e em algumas métricas se mostra mais viável que os mesmos
+
+
+* Tabela de Siglas
+| Sigla | Significado                             |
+| ET    | evapotranspiration                      |
+| TER   | Terrestrial ecosystem respiration       |
+| GPP   | gross primary production                |
+| EC    | Eddy Covariance                         |
+| NEE   | Net ecosystem exchange                  |
+| SW    | Shortwave radiation                     |
+| PAR   | Photosynthetically active radiation     |
+| NIR   | Near-infrared                           |
+| TRMM  | The Tropical Rainfall Measuring Mission |
+|       |                                         |
+
+* Resumo/Introdução
+
+
+* Materiais e Métodos
+
+
+* Resultados
+
+
+* Conclusão

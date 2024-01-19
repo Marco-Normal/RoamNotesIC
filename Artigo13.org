@@ -1,0 +1,73 @@
+:PROPERTIES:
+:ID:       8f686d34-3d49-4037-a4a4-dbcc570d9911
+:mtime:    20240119134917
+:ctime:    20240118153409
+:END:
+#+title: Artigo 13
+#+date: [2024-01-18 Thu 15:34]
+* Resumo
+** Satélite:
+MODIS, Landsat-8
+** Resolução Espacial
+- Landsat-8: 30m
+- MODIS: 500m, 1km
+** Resolução Temporal
+- Landsat-8: 16 dias
+- MODIS: 1 Dia, 3 horas
+** Tratamento Dados satélites:
+- Correção atmosférica (Remoção de nuvens e sombras)
+** Objetivos
+Foram capturados variações do GPP em alta resolução espacial em uma região de estuário na China utilizando EC e dados de Satélites do MODIS e Landsat. Para isso, utilizou-se dois métodos estatísticos, um for uma relação linear entre o GPP e VI \( \times \) PAR e o segundo foi utilizando Random Forest.
+*** Objetivos específicos
+- Analisar o potencial da utilização de modelos lineares e da Random forest para estimativa do GPP
+- Avaliar a importancia relativa de cada VI para estimação do GPP
+- Comparar os padrões espaço temporais entre os dois métodos de estimação.
+** Dados não de satélites
+- Dados de torres de EC
+- Dados dde um sistema Biomet
+- Dados de ondas
+*** Tratamento EC
+- Rotação em dois eixos
+- Remoção de Flutuações turbylentas
+- Correção Webb-Pearman-Leuning
+- Remoção de Picos
+- Testes Estatísticos
+- Correção espctral
+- Preenchimento de dados usando métodos do Falge et al. e Reichstein et al.
+- Sepração do NEE em respiração do ecossistema e GPP
+*** Tratamento Onda
+- Interpolação para uma resolução de 30 minutos
+** Métricas
+- RMSE
+- \( R^2 \)
+** Metodologia
+Para a estimação do GPP, foram escolhidos 4 VI para serem comparados. Foi realizado uma classificação atráves de Random forest para deteminar 5 áreas distintas no pântano. Essa classificação foi realizada com base nos dados do Landsat-8 com menos de 10% de nuvens.
+A estimativa do GPP foi feita integrando medições de ED, VI's derivados do Landasat e PAR vindos do MODIS. Com essas informações, dois algoritmos foram alimentados. Para ambos, foram feitos no mínimo 4 modelos, cada um com seu VI respectivo. O que tinha maior acurácia foi selecionado.
+
+** Resultados
+- Em geral os valores das estimativas do GPP vindos do Landsat-8, usando a regressão, foram consistentemente melhores que os do MODIS. Em geral, as áreas tiveram desempenho diferentes, onde algumas tiveram perfomance, em ambos os satélites, melhores que outras.
+- Em questão do Random Forest, utilizando mais de um VI, eles foram piores, no teste, que a regressão linear. Os \( R^2 \) ficaram entre 0.6-0.7. Em geral, com um maior número de VI's, o desempenho foi melhor.
+- Em geral, para as capturas das variações espaço-temporais, os dois métodos foram consistentes. Foram observados variações diárias relativamente grandes entre os dois modelos. Ambos em geral performaram bem, com uma acúracia geral de \( 92.3\% \).
+  Fim da Pag 5
+- Em geral, os Vi's que perfomaram melhor foram o EVI e o NIRv, ambos que possuem menor influência do solo e em particular, o EVI, que possui uma sensibilidade melhor a efeitos atmosféricos. Em geral, por mais que as estimativas do PAR vindas do modis apresentaram um \( 0.61<R^<0.78 \), elas estão dentro do esperado quando comparadas com o medidos, não sendo uma fonte de erro significativa.
+- Em geral, foi mostrado a possibilidade de estimativa de GPP para um ambiente relativamente difícil de medidas. O melhor modelo foi a regressão linear que utilizou o EVI \( \times \) PAR, com um \( R^2 > 0.75 \). A Random forest foi melhor quando utilizada para predição em grandes áreas e teve perfomance melhor utilizando mais de um VI. Ademais, mostrou-se que utilizando um satélite com maior resolução espacial, melhora-se a perfomance  do modelo.
+
+* Tabela de Siglas
+| Sigla | Significado                            |
+| GPP   | Gross Primary Production               |
+| EVI   | Enhanced Vegetation Index              |
+| PAR   | Photosynthetically active radiation    |
+| NDVI  | Normalized difference Vegetation Index |
+| EC    | Eddy Covariance                        |
+| LUE   | Light Use Efficiency                   |
+
+* Resumo/Introdução
+
+
+* Materiais e Métodos
+
+
+* Resultados
+
+
+* Conclusão

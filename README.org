@@ -1,0 +1,6 @@
+#+title: Readme
+* O que é
+Estou indo para o 15° artigo agora. Alguns deles eu pulei por não achar necessidade de fazer. Pouco a pouco eu vou atualizando esse README com informações e adendos dos artigos que li até agora.
+
+* Artigo 14
+Achei esse artigo extremamaente mal escrito e confuso, por isso não sei se consegui extrair todas as informações necessárias

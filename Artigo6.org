@@ -1,5 +1,7 @@
 :PROPERTIES:
 :ID:       841ce4e1-4c9f-4fc1-b005-1f18c6047afd
+:mtime:    20240119110649
+:ctime:    20240109092823
 :END:
 #+title: Artigo 6
 #+date: [2024-01-09 Tue 09:28]
@@ -65,7 +67,6 @@ O modelo Gaussiano-Gamma consistemente teve Rs preditos com maiores \( R^2 \) e 
 #+NAME: fig:3
 [[file:./Artigos/Pdf/Artigo 6/fig3.png]]
 ** Perfomance de estimação do Rs usando dados de satélites de LST e umidade do solo
-
 
 
 

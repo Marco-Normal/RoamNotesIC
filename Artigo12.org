@@ -1,0 +1,21 @@
+:PROPERTIES:
+:ID:       b3a0eb6d-77ad-4aee-aca7-63b2552fa91d
+:END:
+#+title: Artigo 12
+#+date: [2024-01-18 Thu 15:29]
+* Resumo
+Não acho que seja válido a analise desse artigop, vendo que ele se trata de incêndio e enquanto incêndios, inevitavelmente geram carbono, não é o foco do artigo estivar essa quantidade de carbono liberada, além de que ele se trata de outras variáveis e assuntos, querendo entender como a influência humana afeta a ocorrencia de incendios.
+
+* Tabela de Siglas
+| Sigla | Significado |
+
+* Resumo/Introdução
+
+
+* Materiais e Métodos
+
+
+* Resultados
+
+
+* Conclusão

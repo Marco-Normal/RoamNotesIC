@@ -1,0 +1,55 @@
+:PROPERTIES:
+:ID:       f358a781-c446-41e9-8020-370ba57b0829
+:END:
+#+title: Artigo 9
+#+date: [2024-01-16 Tue 18:21]
+* Obs
+Esse artigo teve valores de \( R^2 \) menores que 0. Isso é possível? Aparentemente sim, só significa que seria melhor chutar o valor médio do que usar o modelo.
+* Resumo
+** Satélite
+- Landsat 8
+- 30 m de resolução espacial
+*** Resolução temporal
+- N/A
+*** Período de estudo
+- Fevereiro de 2019
+** Objetivos
+- Predizer a distribuição espacial de propriedades do solo, incluindo SOC, BD e SOC stock usando ML.
+- Medir a eficiência e potencial de diferentes modelos para as áreas de estudo
+- Dependencias para a construção do modelo e aplicabilidade desse método para diferentes condições fisiográficas.
+** Métricas
+- RMSE, \( R^2 \)
+** Dados que não vieram dos satélites
+- 30 Dados de campo (amostras de solo)
+- Modelo de elevação digital com resolução espacial de 26 m
+** Pré-processamento
+- Harmonização dos dados para resolução espacial de 30 m
+** Metodologia
+Aplicação de 4 modelos de ML, (MLR, ANN, SVM e RF) para predizer SOC, BD e SOC stock. Para isso, foram dados de input os dados de campo e os dados de satélite. Os dados incluiam o modelo de elevação digital, NDVI, razão normalizada de hidroxidos, dentre outros.
+** Resultados
+- OS modelos em geral estavam com um overfitting alto. O melhor, no geral, foi o Random Forest. Ele apresentou um \( R^2 \), em média de 0.8. Os outros modelos foram bastante mal quando no dataset de teste. Todos eles, exceto o Random Forest, não apresentaram um resultado satisfátorio.
+- Para os mapas gerados, o Random Forest foi o que gerou mais informações detalhadas para a distribuição das proprieades do solo.
+- As variáveis significativas variaram de acordo com a área de estudo. Isso mostra que a variabilidade espacial das propriedades do solo é influenciada por diferentes fatores. Em geral, o índice que mais influenciava era a elevação, que apresentou significância em todas as áreas de estudo. NDVI, também foi relativamente importante.
+
+
+
+
+* Tabela de Siglas
+| Sigla | Significado                 |
+| Soc   | Soil organic Carbon         |
+| BD    | Bulk Density                |
+| MLR   | Multiple Linear Regressions |
+| ANN   | Artificial Neural Networks  |
+| SVM   | Support Vector Machines     |
+| DSM   | Digitial soil mapping       |
+
+* Resumo/Introdução
+
+
+* Materiais e Métodos
+
+
+* Resultados
+
+
+* Conclusão

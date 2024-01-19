@@ -1,0 +1,68 @@
+:PROPERTIES:
+:ID:       4c4812d9-5f2c-480b-ab0a-98ce02a9d373
+:END:
+#+title: Artigo 8
+#+date: [2024-01-16 Tue 15:07]
+* Pontos importantes
+Satélite: Landsat, GEDI Lidar
+Modelo: Random Forest
+Variável preditora: LHS
+Período de estudo: 2007-2019
+Dados auxiliares: Dados de 30-m DEM vindos do SRTM
+Resolução:
+ - GEDI: ~25m
+Objetivos:
+ - Ver relações entre métricas estruturais da florestas vindas do GEDI e informações espectrais do Landsat
+ - Investigar diferentes subsets da estimação do GEDI AGBD (como diferentes níveis de sensibilidade) e a sazonalidade das imagens do Landsat que são válidas para fusão
+ - Mostrar o potencial da mistura GEDI-Landast para quantificar e monitrar a perda de biomassa florestal associada ao desmatamento para fazer carvão. Usaram uma floresta de moçambique (Mabalene district) como estudo de caso.
+Pré-Processamento GEDI:
+- Teste de sensitividade
+- Filtragem de Geolocalização:
+  + Remoção de pontos onde a diferença do GEDI L2B e NDVI do Landsat é maior que 1 \( \sigma \).
+Pré-Processamento Landsat:
+- Seleção de imagens com cobertura de nuvens menor que 20%
+  + Remoção maior de nuvens usando CFMASK
+- Criação de 2 medoides anuais
+  + Um de maio a agosto numa epóca de LHS
+  + O ano inteiro de 2007 a 2019
+- Ajuste na série temporal para minizar variações temporais e noise.
+- Aplicação de uma harmonização para minizar flutuações não relacionadas a carvão.
+- Calculo de diversos indíces como variáveis preditoras.
+Pré-Processamento Treino:
+- Variáveis foram truncadas
+Três indices foram analisados com maior enfoque:
+- NBR: Normalized Burn Ratio
+- SAVI: Soil Adjusted Vegetation Index
+- TCA: TC angle
+
+Métricas:
+- RMSE: Root Mean Square Error
+- \( R^2 \): Coeficiente de determinação
+- \%RMSE: Percentual Root Mean Square Error
+- Bias: Viés
+* Resumo
+
+
+* Tabela de Siglas
+| Sigla | Significado                   |
+| ABG   | Above Ground Biomass          |
+| SSA   | Sub-saharan Africa            |
+| AGBD  | Above Ground Biomass density  |
+| LHS   | Limited hydric stress         |
+| ALS   | Airbone Laser Scanning        |
+| OLS   | Ordinary Least Squares        |
+| RH    | (Canopy) Relative height      |
+| PFT   | (Modis) Plant Functional Type |
+| PAI   | Plant Area Index              |
+| DEM   | Digital elevation Model       |
+
+* Resumo/Introdução
+
+
+* Materiais e Métodos
+
+
+* Resultados
+
+
+* Conclusão

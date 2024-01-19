@@ -1,0 +1,45 @@
+:PROPERTIES:
+:ID:       f3eae5f8-96e1-423a-a498-8a078bf3389e
+:END:
+#+title: Artigo 11
+#+date: [2024-01-18 Thu 09:23]
+* Resumo
+** Satélite
+- Sentinel-2
+** Objetivos
+Usando um método de amostragem destrutivo, será quantificado a quantiadade de matéria seca, equivalente à matéria verde e seca, antes e depois de serem "pastadas", com 3, 6, 9 e 15 meses de regeneração da biomassa. O alvo principal é examinar os efeitos de pastagem regenerativa na produtividade do TSDM e se as imagens do Sentinel-2 juntas com o modelo do CIBO Labs poderiam estimar TDSM a nível Plot.
+Para isso, foram comparadas as estimativas do modelo do Cibo Labs para o TSDM com a amostragem destrutiva de uma fazenda na tasmânia em que ovelhas pastavam.
+Em suma:
+- Analisar os efeitos da pastagem regenerativa na produtividade, consumo e "trampling" do TSDM.
+- Utilidade de imagens do Sentinel-2 e acurácia do Modelo do Cibo Labs para estimativa do TSDM sob efeitos de pastagem regenerativa
+** Dados que não são de satélites
+ - Amostras de biomassa retiradas do local de estudo entre Dezembro de 2021 a Novembro de 2022
+** Resolução espacial
+- 10 m
+** Resolução temporal
+- 5 dias
+** Metodologia
+Foi-se feito a análise dos dados de campo e feito a predição do TSDM por meio do aplicativo da Cibo Labs, que utiliza algoritmos de aprendizado de Máquina, DNN e feito a predição na propriedade. A partir disso, foi-se feito uma comparação do medido com o predito por satélites, onde comparou-se os resultados utilizando as métricas da têndencia da série temporal, barras de erro, \( R^2 \) e RMSE.
+** Resultados
+- Notou-se que a principal variável que afeta o TSDM não foi o consumo, mas sim o pisoteamento. Nota-se também que os intervalos de pastos e os períodos de descanso não afetaram muito a habilidade da biomassa se recuperar. Variáveis climáticas foram mais importantes para a recuperação da biomassa do que o manejo.
+- Para as medições de satélite, houveram localidades onde o modelo foi mais preciso, e outras a qual ele ficou com uma grande diparidade. Enquanto o modelo pode ser util para pastagem regenerativa, para aquelas convencionais, as estimativas não foram tão precisas. Em geral, o modelo subestimou TSDM em todos os plots, com um MAE de 745 kg DM/ha e RMSE de 903 kg DM/ha. O modelo é extremamatente sensível à regiões verdes e pouco a regiões secas. O erro de estimativa está dentro da variabilidade da biomassa medida
+- Apesar disso, é possível e viável a utilização de imagens do Sentinel-2 para estimar TSDM. Porém, fica que existe uma relação fraca entre a estimativa do Cibo Labas do TSDM e DM seco.
+* Tabela de Siglas
+| Sigla | Significado                            |
+| ANN   | Aritifical Neural Networks             |
+| RF    | Random Forest                          |
+| SVM   | Support Vector Machines                |
+| DDS   | Decision Support System                |
+| NDVI  | Normalized Difference Vegetation Index |
+| TSDM  | Total standing dry matter              |
+| DNN   | Deep Neural Networks                   |
+* Resumo/Introdução
+
+
+* Materiais e Métodos
+
+
+* Resultados
+
+
+* Conclusão
